@@ -7,7 +7,8 @@ import 'package:hl7trainer/domain/FieldMetadata.dart';
 import 'package:hl7trainer/domain/SegmentMetadata.dart';
 import 'package:hl7trainer/infrastructure/XmlFieldnamesParser.dart';
 import 'package:hl7trainer/presentation/WidgetUtils.dart';
-import 'package:material_search/material_search.dart';
+//import 'package:material_search/material_search.dart';
+import 'package:material_search_bar/material_search_bar.dart';
 
 class SegmentViewWidget extends StatefulWidget {
   @override
@@ -26,7 +27,7 @@ class SegmentChooseWidgetState extends State<SegmentViewWidget> {
     _fieldMap = XmlFieldnamesParser.getSegments();
     var flattened = _fieldMap.values
         .expand((v) => v.fields)
-        .map((f) => MapEntry(f.name.toUpperCase(), f))
+        .map((f) => MapEntry(f.name + " "+ f.parentType+f.index.toString(), f))
         .toList();
     _flattenedSegments = Map.fromEntries(flattened);
     filteredData.add(new Answer("empty"));
@@ -42,12 +43,38 @@ class SegmentChooseWidgetState extends State<SegmentViewWidget> {
   }
 
   Widget body(BuildContext context) {
-    return new Card(
-      child: SizedBox(height: 600.0, child: Scrollbar(child: enterSearchArg())),
-    );
+   return enterSearchArg();
   }
 
   Widget enterSearchArg() {
+    MaterialSearchBar msb= MaterialSearchBar(
+      searchBarColor: Colors.white,
+      searchBarTextColor: Colors.black,
+      searchBarFontSize: 20.0,
+      searchResultsBackgroundColor: Colors.white,
+      searchResultsTextColor: Colors.black,
+      searchResultsFontSize: 20.0,
+      checkmarkIcon: Icon(Icons.check, color: Colors.teal[400]),
+      /*submitButton: FloatingActionButton(
+        heroTag: null,
+        tooltip: "Search",
+        child: new Icon(Icons.arrow_forward),
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white, onPressed: () {},
+      ),*/
+      items: _flattenedSegments.keys.toList(),
+    );
+    msb.changeOnSubmit(() {
+      for (String s in msb.selectedItems) print(s);
+    });
+    msb.changeOnButtonSubmit((String value) {
+      for (String s in msb.selectedItems) print(s);
+    });
+
+    return msb;
+  }
+
+  /*Widget enterSearchArg() {
     return new MaterialSearchInput<String>(
       placeholder: 'Search',
       formatter: (t)=> t+"::",
@@ -67,23 +94,27 @@ class SegmentChooseWidgetState extends State<SegmentViewWidget> {
       },
       //  results:filterOn(criteria)
     );
-  }
+  }*/
 
   Future<List<Answer>> filterOn(String input) {
     if (input.isEmpty) return Future.sync(() => []);
 
     //setState(() {
-    return Future.sync(() => _flattenedSegments.keys
-            .where((s) => s.contains(input.toUpperCase()))
-            .map((s) {
-          var flattenedSegment = _flattenedSegments[s];
-          return Answer(flattenedSegment.name +
-              ": " +
-              flattenedSegment.parentType +
-              "^" +
-              flattenedSegment.index.toString());
-        }).toList());
+    return Future.sync(() => filterAnswers(input));
     //});
+  }
+
+  List<Answer> filterAnswers(String input) {
+    return _flattenedSegments.keys
+          .where((s) => s.contains(input.toUpperCase()))
+          .map((s) {
+        var flattenedSegment = _flattenedSegments[s];
+        return Answer(flattenedSegment.name +
+            ": " +
+            flattenedSegment.parentType +
+            "^" +
+            flattenedSegment.index.toString());
+      }).toList();
   }
 
   possibleAnswers(List<Answer> answers) {
