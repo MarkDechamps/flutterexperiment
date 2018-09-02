@@ -3,7 +3,6 @@ import 'package:hl7trainer/presentation/AssetConstants.dart';
 import 'package:hl7trainer/presentation/SegementChooseWidget.dart';
 import 'package:hl7trainer/presentation/SegementViewWidget.dart';
 import 'package:hl7trainer/presentation/SettingsWidget.dart';
-import 'package:hl7trainer/presentation/WidgetUtils.dart';
 
 class StartWidget extends StatelessWidget {
   @override
@@ -22,22 +21,17 @@ class StartWidget extends StatelessWidget {
         ));
   }
 
-  FlatButton buttonOf(Function f,String text,BuildContext context){
+  FlatButton buttonOf(Function f, String text, BuildContext context) {
     return FlatButton(
-        child: new Card(child: txt(text)),
-        onPressed: () => f(context));
+        child: new Card(child: txt(text)), onPressed: () => f(context));
   }
 
   FlatButton buildSegmentQuizButton(BuildContext context) {
-    return buttonOf(toSegmentChooseWidget, "Quiz",context);
+    return buttonOf(toSegmentChooseWidget, "Quiz", context);
   }
 
   FlatButton buildSegmentViewButton(BuildContext context) {
-    return buttonOf( toSegmentViewWidget,"View",context);
-  }
-
-  FlatButton buildTimelineButton(BuildContext context) {
-    return buttonOf( toTimelineViewWidget,"Timeline",context);
+    return buttonOf(toSegmentViewWidget, "View", context);
   }
 
   AppBar appBar(BuildContext context) => new AppBar(
@@ -56,12 +50,7 @@ class StartWidget extends StatelessWidget {
       MaterialPageRoute(builder: (context) => SegmentViewWidget()),
     );
   }
-  void toTimelineViewWidget(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => new Scaffold( body:pictureTimeline())),
-    );
-  }
+
   List<Widget> actions(BuildContext context) {
     return [
       new IconButton(
@@ -78,10 +67,6 @@ class StartWidget extends StatelessWidget {
 
   Widget pictureHL7() {
     return Image.asset(AssetConstants.HL7);
-  }
-
-  Widget pictureTimeline() {
-    return Image.asset(AssetConstants.TIMELINE);
   }
 
   Widget pictureView() {
@@ -104,8 +89,7 @@ class StartWidget extends StatelessWidget {
   }
 
   Widget me() {
-    return new Text(
-        "(c) Mark Dechamps 26/08/2018  mark.dechamps@gmail.com",
+    return new Text("(c) Mark Dechamps 26/08/2018  mark.dechamps@gmail.com",
         style: new TextStyle(fontWeight: FontWeight.normal, fontSize: 12.0));
   }
 }
